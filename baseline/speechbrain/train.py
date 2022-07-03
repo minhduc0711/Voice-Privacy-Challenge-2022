@@ -251,7 +251,6 @@ def dataio_prep(hparams):
     # Define datasets. We also connect the dataset with the data processing
     # functions defined above.
     datasets = {}
-    hparams["dataloader_options"]["shuffle"] = False
     for dataset in ["train", "valid"]: #, "test"]:
         datasets[dataset] = sb.dataio.dataset.DynamicItemDataset.from_json(
             json_path=hparams[f"{dataset}_annotation"],
@@ -293,21 +292,9 @@ if __name__ == "__main__":
         overrides=overrides,
     )
 
-    # Data preparation, to be run on only one process.
-    # sb.utils.distributed.run_on_main(
-    #     prepare_mini_librispeech,
-    #     kwargs={
-    #         "data_folder": hparams["data_folder"],
-    #         "save_json_train": hparams["train_annotation"],
-    #         "save_json_valid": hparams["valid_annotation"],
-    #         "save_json_test": hparams["test_annotation"],
-    #         "split_ratio": [80, 10, 10],
-    #     },
-    # )
-
     # Create dataset objects "train", "valid", and "test".
     datasets = dataio_prep(hparams)
-    
+
     # Initialize the Brain object to prepare for mask training.
     spk_id_brain = SpkIdBrain(
         modules=hparams["modules"],
